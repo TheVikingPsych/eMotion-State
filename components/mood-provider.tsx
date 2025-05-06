@@ -57,6 +57,7 @@ export function MoodProvider({ children }: { children: React.ReactNode }) {
             id: crypto.randomUUID(),
           }
 
+    // Ensure we're using the timestamp exactly as provided
     setEntries((prev) => {
       // If an entry with this ID already exists, don't add it
       if ("id" in entry && prev.some((e) => e.id === entry.id)) {

@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
@@ -10,6 +10,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { Switch } from "@/components/ui/switch"
+import { SimpleDateTimeSelector } from "@/components/simple-date-time-selector"
 import { useMood, type Feeling } from "./mood-provider"
 import { getFunctionLevelDescriptor } from "@/lib/function-level-utils"
 
@@ -24,15 +26,22 @@ export function MoodEntryForm({ onSuccess }: MoodEntryFormProps) {
   const [customFeeling, setCustomFeeling] = useState("")
   const [reason, setReason] = useState("")
 
+  // Date and time state
+  const [useCustomDateTime, setUseCustomDateTime] = useState(false)
+  const [customDate, setCustomDate] = useState<Date>(new Date())
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Use custom date/time or current time
+    const timestamp = useCustomDateTime ? customDate.toISOString() : new Date().toISOString()
 
     addEntry({
       functionLevel,
       feeling,
       customFeeling: feeling === "Other" ? customFeeling : undefined,
       reason,
-      timestamp: new Date().toISOString(),
+      timestamp,
     })
 
     // Reset form
@@ -40,11 +49,19 @@ export function MoodEntryForm({ onSuccess }: MoodEntryFormProps) {
     setFeeling("Bland")
     setCustomFeeling("")
     setReason("")
+    // Don't reset date/time settings to allow for multiple backdated entries
 
     if (onSuccess) {
       onSuccess()
     }
   }
+
+  // Reset the custom date to now when toggling off custom date/time
+  useEffect(() => {
+    if (!useCustomDateTime) {
+      setCustomDate(new Date())
+    }
+  }, [useCustomDateTime])
 
   return (
     <Card>
@@ -159,6 +176,32 @@ export function MoodEntryForm({ onSuccess }: MoodEntryFormProps) {
               required
               className="min-h-[100px]"
             />
+          </div>
+
+          {/* Date and Time Section */}
+          <div className="space-y-4 pt-2 border-t">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-medium">Entry Date & Time</h3>
+                <p className="text-sm text-muted-foreground">
+                  {useCustomDateTime ? "Manually set the date and time for this entry" : "Using current date and time"}
+                </p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch id="custom-date-time" checked={useCustomDateTime} onCheckedChange={setUseCustomDateTime} />
+                <Label htmlFor="custom-date-time">Backdate entry</Label>
+              </div>
+            </div>
+
+            {useCustomDateTime && (
+              <div className="p-4 border rounded-md bg-muted/30">
+                <SimpleDateTimeSelector
+                  value={customDate}
+                  onChange={setCustomDate}
+                  label="Select date and time for this entry"
+                />
+              </div>
+            )}
           </div>
 
           <Button type="submit" className="w-full">
