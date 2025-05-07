@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { SimpleDateTimeSelector } from "@/components/simple-date-time-selector"
-import { useMood, type Feeling } from "./mood-provider"
+import { useMood, type Feeling, type Location } from "./mood-provider"
 import { getFunctionLevelDescriptor } from "@/lib/function-level-utils"
 
 interface MoodEntryFormProps {
@@ -24,6 +24,8 @@ export function MoodEntryForm({ onSuccess }: MoodEntryFormProps) {
   const [functionLevel, setFunctionLevel] = useState(0)
   const [feeling, setFeeling] = useState<Feeling>("Bland")
   const [customFeeling, setCustomFeeling] = useState("")
+  const [location, setLocation] = useState<Location>("Home")
+  const [customLocation, setCustomLocation] = useState("")
   const [reason, setReason] = useState("")
 
   // Date and time state
@@ -40,6 +42,8 @@ export function MoodEntryForm({ onSuccess }: MoodEntryFormProps) {
       functionLevel,
       feeling,
       customFeeling: feeling === "Other" ? customFeeling : undefined,
+      location,
+      customLocation: location === "Other" ? customLocation : undefined,
       reason,
       timestamp,
     })
@@ -48,6 +52,8 @@ export function MoodEntryForm({ onSuccess }: MoodEntryFormProps) {
     setFunctionLevel(0)
     setFeeling("Bland")
     setCustomFeeling("")
+    setLocation("Home")
+    setCustomLocation("")
     setReason("")
     // Don't reset date/time settings to allow for multiple backdated entries
 
@@ -176,6 +182,52 @@ export function MoodEntryForm({ onSuccess }: MoodEntryFormProps) {
               required
               className="min-h-[100px]"
             />
+          </div>
+
+          {/* New Location Section */}
+          <div className="space-y-4">
+            <h3 className="font-medium">Where Are You?:</h3>
+            <RadioGroup value={location} onValueChange={(value) => setLocation(value as Location)}>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Home" id="home" />
+                  <Label htmlFor="home">Home</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Work" id="work" />
+                  <Label htmlFor="work">Work</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="School" id="school" />
+                  <Label htmlFor="school">School</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Church" id="church" />
+                  <Label htmlFor="church">Church</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Restaurant" id="restaurant" />
+                  <Label htmlFor="restaurant">Restaurant</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Other" id="other-location" />
+                  <Label htmlFor="other-location">Other</Label>
+                </div>
+              </div>
+            </RadioGroup>
+
+            {location === "Other" && (
+              <div className="pt-2">
+                <Label htmlFor="custom-location">Specify location:</Label>
+                <Input
+                  id="custom-location"
+                  value={customLocation}
+                  onChange={(e) => setCustomLocation(e.target.value)}
+                  placeholder="Enter your location"
+                  required={location === "Other"}
+                />
+              </div>
+            )}
           </div>
 
           {/* Date and Time Section */}

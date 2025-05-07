@@ -189,339 +189,6 @@ const STOPWORDS = new Set([
   "still",
 ])
 
-// Predefined themes with associated keywords
-const THEMES = {
-  "Work & Career": [
-    "work",
-    "job",
-    "career",
-    "boss",
-    "colleague",
-    "coworker",
-    "meeting",
-    "project",
-    "deadline",
-    "promotion",
-    "office",
-    "workplace",
-    "professional",
-    "employment",
-  ],
-  Relationships: [
-    "relationship",
-    "partner",
-    "spouse",
-    "husband",
-    "wife",
-    "boyfriend",
-    "girlfriend",
-    "date",
-    "dating",
-    "marriage",
-    "divorce",
-    "breakup",
-    "love",
-    "romantic",
-    "romance",
-  ],
-  Family: [
-    "family",
-    "parent",
-    "mother",
-    "father",
-    "mom",
-    "dad",
-    "child",
-    "children",
-    "kid",
-    "kids",
-    "son",
-    "daughter",
-    "brother",
-    "sister",
-    "sibling",
-    "grandparent",
-    "relative",
-  ],
-  Health: [
-    "health",
-    "sick",
-    "illness",
-    "disease",
-    "pain",
-    "doctor",
-    "hospital",
-    "medication",
-    "medicine",
-    "symptom",
-    "diagnosis",
-    "treatment",
-    "recovery",
-    "healing",
-    "therapy",
-  ],
-  "Mental Health": [
-    "anxiety",
-    "depression",
-    "stress",
-    "therapy",
-    "therapist",
-    "counseling",
-    "counselor",
-    "mental",
-    "emotional",
-    "psychiatrist",
-    "psychologist",
-    "panic",
-    "trauma",
-    "overwhelm",
-  ],
-  "Social Life": [
-    "friend",
-    "social",
-    "party",
-    "gathering",
-    "hangout",
-    "outing",
-    "event",
-    "meetup",
-    "community",
-    "group",
-    "club",
-    "society",
-    "network",
-    "connection",
-  ],
-  "Personal Growth": [
-    "growth",
-    "learn",
-    "learning",
-    "improve",
-    "improvement",
-    "develop",
-    "development",
-    "progress",
-    "goal",
-    "achievement",
-    "success",
-    "challenge",
-    "opportunity",
-    "potential",
-  ],
-  Finances: [
-    "money",
-    "financial",
-    "finance",
-    "budget",
-    "income",
-    "expense",
-    "debt",
-    "saving",
-    "investment",
-    "bill",
-    "payment",
-    "afford",
-    "cost",
-    "economic",
-    "economy",
-  ],
-  Education: [
-    "school",
-    "college",
-    "university",
-    "class",
-    "course",
-    "study",
-    "student",
-    "teacher",
-    "professor",
-    "lecture",
-    "assignment",
-    "exam",
-    "test",
-    "grade",
-    "education",
-    "academic",
-  ],
-  Leisure: [
-    "hobby",
-    "interest",
-    "fun",
-    "relax",
-    "relaxation",
-    "entertainment",
-    "enjoy",
-    "enjoyment",
-    "leisure",
-    "pleasure",
-    "recreation",
-    "vacation",
-    "holiday",
-    "break",
-    "rest",
-  ],
-  Sleep: [
-    "sleep",
-    "tired",
-    "exhausted",
-    "fatigue",
-    "insomnia",
-    "rest",
-    "nap",
-    "bed",
-    "dream",
-    "nightmare",
-    "awake",
-    "wake",
-    "slept",
-  ],
-  Exercise: [
-    "exercise",
-    "workout",
-    "gym",
-    "fitness",
-    "run",
-    "running",
-    "walk",
-    "walking",
-    "jog",
-    "jogging",
-    "sport",
-    "training",
-    "physical",
-    "active",
-    "activity",
-  ],
-  "Food & Diet": [
-    "food",
-    "eat",
-    "eating",
-    "diet",
-    "nutrition",
-    "meal",
-    "breakfast",
-    "lunch",
-    "dinner",
-    "snack",
-    "hungry",
-    "appetite",
-    "weight",
-    "calorie",
-  ],
-  Technology: [
-    "technology",
-    "tech",
-    "computer",
-    "phone",
-    "smartphone",
-    "internet",
-    "online",
-    "digital",
-    "device",
-    "app",
-    "application",
-    "software",
-    "hardware",
-    "social media",
-  ],
-  Weather: [
-    "weather",
-    "rain",
-    "snow",
-    "sun",
-    "sunny",
-    "cloud",
-    "cloudy",
-    "storm",
-    "wind",
-    "windy",
-    "temperature",
-    "hot",
-    "cold",
-    "warm",
-    "cool",
-  ],
-  Future: [
-    "future",
-    "plan",
-    "planning",
-    "hope",
-    "dream",
-    "aspiration",
-    "ambition",
-    "goal",
-    "objective",
-    "target",
-    "aim",
-    "intention",
-    "purpose",
-    "direction",
-  ],
-  Past: [
-    "past",
-    "memory",
-    "remember",
-    "reminisce",
-    "history",
-    "nostalgia",
-    "regret",
-    "mistake",
-    "error",
-    "failure",
-    "success",
-    "achievement",
-    "experience",
-    "lesson",
-  ],
-  Accomplishment: [
-    "accomplish",
-    "achievement",
-    "success",
-    "win",
-    "victory",
-    "triumph",
-    "milestone",
-    "progress",
-    "advance",
-    "improvement",
-    "development",
-    "growth",
-    "result",
-    "outcome",
-  ],
-  Frustration: [
-    "frustrate",
-    "frustration",
-    "annoyed",
-    "annoying",
-    "irritated",
-    "irritating",
-    "bother",
-    "bothered",
-    "upset",
-    "disappointed",
-    "disappointment",
-    "setback",
-    "obstacle",
-    "barrier",
-  ],
-  Gratitude: [
-    "grateful",
-    "gratitude",
-    "thankful",
-    "appreciate",
-    "appreciation",
-    "blessed",
-    "blessing",
-    "fortune",
-    "fortunate",
-    "luck",
-    "lucky",
-    "privilege",
-    "privileged",
-  ],
-}
-
 // Extract keywords from text
 function extractKeywords(text: string): string[] {
   if (!text) return []
@@ -535,59 +202,57 @@ function extractKeywords(text: string): string[] {
   return words
 }
 
-// Identify themes in text
-export function identifyThemes(text: string): Record<string, number> {
-  const keywords = extractKeywords(text)
-  const themeScores: Record<string, number> = {}
-
-  // Initialize all themes with zero score
-  Object.keys(THEMES).forEach((theme) => {
-    themeScores[theme] = 0
+// Identify themes in text based on actual words used
+export function identifyThemes(entries: MoodEntry[]): Record<string, number> {
+  // First, extract all keywords from all entries
+  const allKeywords: string[] = []
+  entries.forEach((entry) => {
+    allKeywords.push(...extractKeywords(entry.reason))
   })
 
-  // Score each theme based on keyword matches
-  keywords.forEach((keyword) => {
-    Object.entries(THEMES).forEach(([theme, themeKeywords]) => {
-      if (themeKeywords.includes(keyword)) {
-        themeScores[theme] += 1
-      } else {
-        // Check for partial matches (e.g., "work" in "working")
-        for (const themeKeyword of themeKeywords) {
-          if (keyword.includes(themeKeyword) || themeKeyword.includes(keyword)) {
-            themeScores[theme] += 0.5
-            break
-          }
-        }
-      }
+  // Count word frequencies
+  const wordFrequency: Record<string, number> = {}
+  allKeywords.forEach((word) => {
+    wordFrequency[word] = (wordFrequency[word] || 0) + 1
+  })
+
+  // Get top words to use as themes (words that appear at least twice)
+  const themes: Record<string, number> = {}
+  Object.entries(wordFrequency)
+    .filter(([_, count]) => count >= 2) // Only include words that appear at least twice
+    .sort((a, b) => b[1] - a[1]) // Sort by frequency
+    .slice(0, 15) // Take top 15 words
+    .forEach(([word, count]) => {
+      // Capitalize first letter of each word for theme names
+      const theme = word.charAt(0).toUpperCase() + word.slice(1)
+      themes[theme] = count
     })
-  })
 
-  // Filter out themes with zero score
-  return Object.fromEntries(Object.entries(themeScores).filter(([_, score]) => score > 0))
+  return themes
 }
 
 // Analyze entries and return theme data
 export function analyzeEntries(entries: MoodEntry[]): {
   themeFrequency: Record<string, number>
   themesOverTime: Record<string, { date: string; count: number }[]>
-  themesByFunctionLevel: Record<string, { level: number; count: number }[]>
-  themesByFeeling: Record<string, Record<string, number>>
   wordFrequency: Record<string, number>
 } {
   // Initialize result objects
   const themeFrequency: Record<string, number> = {}
   const themesOverTime: Record<string, { date: string; count: number }[]> = {}
-  const themesByFunctionLevel: Record<string, { level: number; count: number }[]> = {}
-  const themesByFeeling: Record<string, Record<string, number>> = {}
   const wordFrequency: Record<string, number> = {}
+
+  // Get themes based on actual words in entries
+  const themes = identifyThemes(entries)
+  Object.keys(themes).forEach((theme) => {
+    themeFrequency[theme] = 0
+    themesOverTime[theme] = []
+  })
 
   // Process each entry
   entries.forEach((entry) => {
     // Extract date (just the day part)
     const date = new Date(entry.timestamp).toISOString().split("T")[0]
-
-    // Get themes for this entry
-    const entryThemes = identifyThemes(entry.reason)
 
     // Extract all words for word cloud
     const words = extractKeywords(entry.reason)
@@ -595,39 +260,23 @@ export function analyzeEntries(entries: MoodEntry[]): {
       wordFrequency[word] = (wordFrequency[word] || 0) + 1
     })
 
-    // Update theme frequency
-    Object.entries(entryThemes).forEach(([theme, score]) => {
-      // Update overall frequency
-      themeFrequency[theme] = (themeFrequency[theme] || 0) + score
+    // Count theme occurrences in this entry
+    Object.keys(themes).forEach((theme) => {
+      const themeWord = theme.toLowerCase()
+      const count = words.filter((word) => word === themeWord).length
 
-      // Update themes over time
-      if (!themesOverTime[theme]) {
-        themesOverTime[theme] = []
-      }
-      const existingDateEntry = themesOverTime[theme].find((item) => item.date === date)
-      if (existingDateEntry) {
-        existingDateEntry.count += score
-      } else {
-        themesOverTime[theme].push({ date, count: score })
-      }
+      if (count > 0) {
+        // Update overall frequency
+        themeFrequency[theme] = (themeFrequency[theme] || 0) + count
 
-      // Update themes by function level
-      if (!themesByFunctionLevel[theme]) {
-        themesByFunctionLevel[theme] = []
+        // Update themes over time
+        const existingDateEntry = themesOverTime[theme].find((item) => item.date === date)
+        if (existingDateEntry) {
+          existingDateEntry.count += count
+        } else {
+          themesOverTime[theme].push({ date, count })
+        }
       }
-      const existingLevelEntry = themesByFunctionLevel[theme].find((item) => item.level === entry.functionLevel)
-      if (existingLevelEntry) {
-        existingLevelEntry.count += score
-      } else {
-        themesByFunctionLevel[theme].push({ level: entry.functionLevel, count: score })
-      }
-
-      // Update themes by feeling
-      if (!themesByFeeling[theme]) {
-        themesByFeeling[theme] = {}
-      }
-      const feeling = entry.feeling === "Other" && entry.customFeeling ? entry.customFeeling : entry.feeling
-      themesByFeeling[theme][feeling] = (themesByFeeling[theme][feeling] || 0) + score
     })
   })
 
@@ -636,16 +285,9 @@ export function analyzeEntries(entries: MoodEntry[]): {
     themesOverTime[theme].sort((a, b) => a.date.localeCompare(b.date))
   })
 
-  // Sort themes by function level
-  Object.keys(themesByFunctionLevel).forEach((theme) => {
-    themesByFunctionLevel[theme].sort((a, b) => a.level - b.level)
-  })
-
   return {
     themeFrequency,
     themesOverTime,
-    themesByFunctionLevel,
-    themesByFeeling,
     wordFrequency,
   }
 }

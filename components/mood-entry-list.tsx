@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useMood } from "./mood-provider"
 import { Button } from "@/components/ui/button"
-import { Trash2 } from "lucide-react"
+import { Trash2, MapPin } from "lucide-react"
 import { getFunctionLevelDescriptor } from "@/lib/function-level-utils"
 
 export function MoodEntryList() {
@@ -97,6 +97,15 @@ export function MoodEntryList() {
                     />
                   </div>
                 </div>
+
+                {entry.location && (
+                  <div className="mt-2 flex items-center text-sm text-muted-foreground">
+                    <MapPin className="h-3.5 w-3.5 mr-1" />
+                    <span>
+                      {entry.location === "Other" && entry.customLocation ? entry.customLocation : entry.location}
+                    </span>
+                  </div>
+                )}
 
                 <p className="mt-2 text-sm">{entry.reason}</p>
 

@@ -5,6 +5,7 @@ import type React from "react"
 import { createContext, useContext, useEffect, useState } from "react"
 
 export type Feeling = "Afraid" | "Sad" | "Bland" | "Angry" | "Happy" | "Other"
+export type Location = "Home" | "Work" | "School" | "Church" | "Restaurant" | "Other"
 
 export interface MoodEntry {
   id: string
@@ -13,6 +14,8 @@ export interface MoodEntry {
   customFeeling?: string
   reason: string
   timestamp: string
+  location: Location
+  customLocation?: string
 }
 
 interface MoodContextType {
@@ -34,7 +37,13 @@ export function MoodProvider({ children }: { children: React.ReactNode }) {
     const storedEntries = localStorage.getItem("moodEntries")
     if (storedEntries) {
       try {
-        setEntries(JSON.parse(storedEntries))
+        // Handle migration of old entries without location
+        const parsedEntries = JSON.parse(storedEntries)
+        const migratedEntries = parsedEntries.map((entry: any) => ({
+          ...entry,
+          location: entry.location || "Home", // Default to Home for old entries
+        }))
+        setEntries(migratedEntries)
       } catch (e) {
         console.error("Failed to parse stored entries", e)
       }

@@ -20,9 +20,14 @@ import {
   type ChartData,
   type ChartOptions,
 } from "chart.js"
+import { AlertCircle } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 // Register ChartJS components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend)
+
+// Minimum entries required for analysis
+const MIN_ENTRIES_REQUIRED = 15
 
 export function ThematicAnalysis() {
   const { entries } = useMood()
@@ -31,14 +36,44 @@ export function ThematicAnalysis() {
 
   // Run analysis when entries change
   useEffect(() => {
-    if (entries.length > 0) {
+    if (entries.length >= MIN_ENTRIES_REQUIRED) {
       const result = analyzeEntries(entries)
       setAnalysis(result)
+    } else {
+      setAnalysis(null)
     }
   }, [entries])
 
-  // If no entries or analysis, show placeholder
-  if (!analysis || entries.length === 0) {
+  // If not enough entries, show message
+  if (entries.length < MIN_ENTRIES_REQUIRED) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Thematic Analysis</CardTitle>
+          <CardDescription>Discover patterns and themes in your emotional state entries</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Alert variant="default">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Not enough entries</AlertTitle>
+            <AlertDescription>
+              You need at least {MIN_ENTRIES_REQUIRED} entries to use thematic analysis. You currently have{" "}
+              {entries.length} {entries.length === 1 ? "entry" : "entries"}.
+            </AlertDescription>
+          </Alert>
+          <div className="mt-4 text-sm text-muted-foreground">
+            <p>
+              Thematic analysis helps identify patterns in your entries by analyzing the words you use to describe your
+              feelings and experiences. Continue adding entries to unlock this feature.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  // If no analysis yet, show loading
+  if (!analysis) {
     return (
       <Card>
         <CardHeader>
@@ -46,11 +81,7 @@ export function ThematicAnalysis() {
           <CardDescription>Discover patterns and themes in your emotional state entries</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center h-[300px] text-center">
-          <p className="text-muted-foreground">
-            {entries.length === 0
-              ? "No entries yet. Add your first emotional state entry to see thematic analysis."
-              : "Analyzing your entries..."}
-          </p>
+          <p className="text-muted-foreground">Analyzing your entries...</p>
         </CardContent>
       </Card>
     )
@@ -121,33 +152,6 @@ export function ThematicAnalysis() {
     }),
   }
 
-  // Prepare chart data for themes by function level
-  const themesByFunctionLevelData: ChartData<"bar"> = {
-    labels: [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    datasets: topThemes.map((theme) => {
-      const themeData = analysis.themesByFunctionLevel[theme] || []
-      const dataByLevel: Record<number, number> = {}
-
-      // Initialize all levels with zero
-      for (let i = -10; i <= 10; i++) {
-        dataByLevel[i] = 0
-      }
-
-      // Fill in actual values
-      themeData.forEach(({ level, count }) => {
-        dataByLevel[level] = count
-      })
-
-      return {
-        label: theme,
-        data: Object.values(dataByLevel),
-        backgroundColor: getThemeColor(theme, 0.7),
-        borderColor: getThemeColor(theme),
-        borderWidth: 1,
-      }
-    }),
-  }
-
   // Chart options
   const barOptions: ChartOptions<"bar"> = {
     responsive: true,
@@ -158,7 +162,7 @@ export function ThematicAnalysis() {
       },
       tooltip: {
         callbacks: {
-          label: (context) => `${context.dataset.label}: ${context.parsed.y.toFixed(1)}`,
+          label: (context) => `${context.dataset.label}: ${context.parsed.y.toFixed(0)}`,
         },
       },
     },
@@ -178,7 +182,7 @@ export function ThematicAnalysis() {
       },
       tooltip: {
         callbacks: {
-          label: (context) => `${context.dataset.label}: ${context.parsed.y.toFixed(1)}`,
+          label: (context) => `${context.dataset.label}: ${context.parsed.y.toFixed(0)}`,
         },
       },
     },
@@ -212,10 +216,9 @@ export function ThematicAnalysis() {
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="themes">Common Themes</TabsTrigger>
             <TabsTrigger value="over-time">Themes Over Time</TabsTrigger>
-            <TabsTrigger value="by-level">Themes by Function Level</TabsTrigger>
           </TabsList>
 
           <TabsContent value="themes" className="space-y-4 mt-4">
@@ -270,25 +273,6 @@ export function ThematicAnalysis() {
               <p className="text-sm">
                 This visualization shows how different themes have appeared in your entries over time. Look for patterns
                 such as increasing or decreasing trends, or themes that appear together.
-              </p>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="by-level" className="mt-4">
-            <h3 className="text-lg font-medium mb-2">Themes by Function Level</h3>
-            <div className="h-[400px]">
-              <Bar data={themesByFunctionLevelData} options={barOptions} />
-            </div>
-            <p className="text-sm text-muted-foreground mt-2">
-              This chart shows how themes correlate with your function level.
-            </p>
-
-            <div className="bg-muted p-4 rounded-md mt-4">
-              <h3 className="text-md font-medium mb-2">Correlation Insights</h3>
-              <p className="text-sm">
-                This visualization helps identify which themes tend to appear when you're feeling better or worse.
-                Themes that appear more at higher function levels may be positive influences, while those at lower
-                levels might be stressors or challenges.
               </p>
             </div>
           </TabsContent>
