@@ -21,6 +21,7 @@ export interface MoodEntry {
 interface MoodContextType {
   entries: MoodEntry[]
   addEntry: (entry: Omit<MoodEntry, "id"> | MoodEntry) => void
+  updateEntry: (id: string, updatedEntry: Omit<MoodEntry, "id">) => void
   deleteEntry: (id: string) => void
   timeRange: "day" | "week" | "month" | "all"
   setTimeRange: (range: "day" | "week" | "month" | "all") => void
@@ -76,12 +77,16 @@ export function MoodProvider({ children }: { children: React.ReactNode }) {
     })
   }
 
+  const updateEntry = (id: string, updatedEntry: Omit<MoodEntry, "id">) => {
+    setEntries((prev) => prev.map((entry) => (entry.id === id ? { ...updatedEntry, id } : entry)))
+  }
+
   const deleteEntry = (id: string) => {
     setEntries((prev) => prev.filter((entry) => entry.id !== id))
   }
 
   return (
-    <MoodContext.Provider value={{ entries, addEntry, deleteEntry, timeRange, setTimeRange }}>
+    <MoodContext.Provider value={{ entries, addEntry, updateEntry, deleteEntry, timeRange, setTimeRange }}>
       {children}
     </MoodContext.Provider>
   )
