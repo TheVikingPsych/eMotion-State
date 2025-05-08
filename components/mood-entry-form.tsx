@@ -15,6 +15,16 @@ import { SimpleDateTimeSelector } from "@/components/simple-date-time-selector"
 import { useMood, type Feeling, type Location } from "./mood-provider"
 import { getFunctionLevelDescriptor } from "@/lib/function-level-utils"
 
+// Emoticons for each feeling
+const feelingEmoticons: Record<Feeling, string> = {
+  Afraid: "😨",
+  Sad: "😢",
+  Bland: "😐",
+  Angry: "😠",
+  Happy: "😊",
+  Other: "🤔",
+}
+
 interface MoodEntryFormProps {
   onSuccess?: () => void
 }
@@ -133,27 +143,27 @@ export function MoodEntryForm({ onSuccess }: MoodEntryFormProps) {
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Afraid" id="afraid" />
-                  <Label htmlFor="afraid">Afraid</Label>
+                  <Label htmlFor="afraid">{feelingEmoticons.Afraid} Afraid</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Sad" id="sad" />
-                  <Label htmlFor="sad">Sad</Label>
+                  <Label htmlFor="sad">{feelingEmoticons.Sad} Sad</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Bland" id="bland" />
-                  <Label htmlFor="bland">Bland</Label>
+                  <Label htmlFor="bland">{feelingEmoticons.Bland} Bland</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Angry" id="angry" />
-                  <Label htmlFor="angry">Angry</Label>
+                  <Label htmlFor="angry">{feelingEmoticons.Angry} Angry</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Happy" id="happy" />
-                  <Label htmlFor="happy">Happy</Label>
+                  <Label htmlFor="happy">{feelingEmoticons.Happy} Happy</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Other" id="other" />
-                  <Label htmlFor="other">Other</Label>
+                  <Label htmlFor="other">{feelingEmoticons.Other} Other</Label>
                 </div>
               </div>
             </RadioGroup>
@@ -184,7 +194,7 @@ export function MoodEntryForm({ onSuccess }: MoodEntryFormProps) {
             />
           </div>
 
-          {/* New Location Section */}
+          {/* Location Section */}
           <div className="space-y-4">
             <h3 className="font-medium">Where Are You?:</h3>
             <RadioGroup value={location} onValueChange={(value) => setLocation(value as Location)}>

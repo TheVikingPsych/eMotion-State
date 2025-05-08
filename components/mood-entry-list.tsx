@@ -2,11 +2,21 @@
 
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useMood, type MoodEntry } from "./mood-provider"
+import { useMood, type MoodEntry, type Feeling } from "./mood-provider"
 import { Button } from "@/components/ui/button"
 import { Trash2, MapPin, Edit } from "lucide-react"
 import { getFunctionLevelDescriptor } from "@/lib/function-level-utils"
 import { EditEntryDialog } from "./edit-entry-dialog"
+
+// Emoticons for each feeling
+const feelingEmoticons: Record<Feeling, string> = {
+  Afraid: "😨",
+  Sad: "😢",
+  Bland: "😐",
+  Angry: "😠",
+  Happy: "😊",
+  Other: "🤔",
+}
 
 export function MoodEntryList() {
   const { entries, deleteEntry } = useMood()
@@ -74,6 +84,7 @@ export function MoodEntryList() {
                     <div className="flex items-center gap-2">
                       <div className={`w-3 h-3 rounded-full ${getFeelingColor(entry.feeling)}`} />
                       <h3 className="font-medium">
+                        {feelingEmoticons[entry.feeling as Feeling] || "🤔"}{" "}
                         {entry.feeling === "Other" && entry.customFeeling ? entry.customFeeling : entry.feeling}
                       </h3>
                     </div>

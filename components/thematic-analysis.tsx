@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useMood } from "./mood-provider"
 import { analyzeEntries, getTopItems, getThemeColor } from "@/lib/text-analysis"
-import { Bar, Pie, Line } from "react-chartjs-2"
+import { Bar, Line } from "react-chartjs-2"
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -114,6 +114,36 @@ export function ThematicAnalysis() {
     ],
   }
 
+  // Prepare chart data for words by function level
+  const wordsByFunctionLevelData: ChartData<"bar"> = {
+    labels: [
+      ...getTopItems(analysis.wordsByFunctionLevel.positive, 7).map(([word]) => word),
+      ...getTopItems(analysis.wordsByFunctionLevel.negative, 7).map(([word]) => word),
+    ],
+    datasets: [
+      {
+        label: "Positive Function Level",
+        data: [
+          ...getTopItems(analysis.wordsByFunctionLevel.positive, 7).map(([_, count]) => count),
+          ...Array(getTopItems(analysis.wordsByFunctionLevel.negative, 7).length).fill(0),
+        ],
+        backgroundColor: "rgba(34, 197, 94, 0.7)", // green
+        borderColor: "rgba(34, 197, 94, 1)",
+        borderWidth: 1,
+      },
+      {
+        label: "Negative Function Level",
+        data: [
+          ...Array(getTopItems(analysis.wordsByFunctionLevel.positive, 7).length).fill(0),
+          ...getTopItems(analysis.wordsByFunctionLevel.negative, 7).map(([_, count]) => count),
+        ],
+        backgroundColor: "rgba(239, 68, 68, 0.7)", // red
+        borderColor: "rgba(239, 68, 68, 1)",
+        borderWidth: 1,
+      },
+    ],
+  }
+
   // Get top 5 themes for themes over time chart
   const topThemes = getTopItems(analysis.themeFrequency, 5).map(([theme]) => theme)
 
@@ -208,6 +238,42 @@ export function ThematicAnalysis() {
     },
   }
 
+  // Function level words chart options
+  const functionLevelWordsOptions: ChartOptions<"bar"> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: "y" as const, // Horizontal bar chart
+    plugins: {
+      legend: {
+        position: "top" as const,
+      },
+      tooltip: {
+        callbacks: {
+          label: (context) => `${context.dataset.label}: ${context.parsed.x.toFixed(0)} occurrences`,
+        },
+      },
+      title: {
+        display: true,
+        text: "Words Used in Positive vs Negative States",
+      },
+    },
+    scales: {
+      x: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "Frequency",
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: "Words",
+        },
+      },
+    },
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -216,32 +282,21 @@ export function ThematicAnalysis() {
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="themes">Common Themes</TabsTrigger>
             <TabsTrigger value="over-time">Themes Over Time</TabsTrigger>
+            <TabsTrigger value="by-mood">Words by Mood</TabsTrigger>
           </TabsList>
 
           <TabsContent value="themes" className="space-y-4 mt-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h3 className="text-lg font-medium mb-2">Top Themes</h3>
-                <div className="h-[300px]">
-                  <Bar data={themeFrequencyData} options={barOptions} />
-                </div>
-                <p className="text-sm text-muted-foreground mt-2">
-                  This chart shows the most common themes mentioned in your entries.
-                </p>
+            <div>
+              <h3 className="text-lg font-medium mb-2">Top Themes</h3>
+              <div className="h-[300px]">
+                <Bar data={themeFrequencyData} options={barOptions} />
               </div>
-
-              <div>
-                <h3 className="text-lg font-medium mb-2">Common Words</h3>
-                <div className="h-[300px]">
-                  <Pie data={wordCloudData} options={pieOptions} />
-                </div>
-                <p className="text-sm text-muted-foreground mt-2">
-                  This chart shows the most frequently used words in your entries.
-                </p>
-              </div>
+              <p className="text-sm text-muted-foreground mt-2">
+                This chart shows the most common themes mentioned in your entries.
+              </p>
             </div>
 
             <div className="bg-muted p-4 rounded-md mt-4">
@@ -274,6 +329,33 @@ export function ThematicAnalysis() {
                 This visualization shows how different themes have appeared in your entries over time. Look for patterns
                 such as increasing or decreasing trends, or themes that appear together.
               </p>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="by-mood" className="mt-4">
+            <h3 className="text-lg font-medium mb-2">Words Used in Positive vs Negative States</h3>
+            <div className="h-[500px]">
+              <Bar data={wordsByFunctionLevelData} options={functionLevelWordsOptions} />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div className="bg-green-50 dark:bg-green-950/30 p-4 rounded-md">
+                <h4 className="text-md font-medium mb-2 text-green-700 dark:text-green-400">
+                  Top Words in Positive States
+                </h4>
+                <p className="text-sm">
+                  These are the words you use most frequently when your function level is positive (above 0). They may
+                  represent positive influences or experiences in your life.
+                </p>
+              </div>
+              <div className="bg-red-50 dark:bg-red-950/30 p-4 rounded-md">
+                <h4 className="text-md font-medium mb-2 text-red-700 dark:text-red-400">
+                  Top Words in Negative States
+                </h4>
+                <p className="text-sm">
+                  These are the words you use most frequently when your function level is negative (below 0). They may
+                  represent challenges or stressors in your life.
+                </p>
+              </div>
             </div>
           </TabsContent>
         </Tabs>

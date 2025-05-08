@@ -231,16 +231,52 @@ export function identifyThemes(entries: MoodEntry[]): Record<string, number> {
   return themes
 }
 
+// Get words by function level (positive vs negative)
+export function getWordsByFunctionLevel(entries: MoodEntry[]): {
+  positive: Record<string, number>
+  negative: Record<string, number>
+} {
+  const positiveWords: Record<string, number> = {}
+  const negativeWords: Record<string, number> = {}
+
+  // Group entries by function level
+  const positiveEntries = entries.filter((entry) => entry.functionLevel > 0)
+  const negativeEntries = entries.filter((entry) => entry.functionLevel < 0)
+
+  // Process positive entries
+  positiveEntries.forEach((entry) => {
+    const words = extractKeywords(entry.reason)
+    words.forEach((word) => {
+      positiveWords[word] = (positiveWords[word] || 0) + 1
+    })
+  })
+
+  // Process negative entries
+  negativeEntries.forEach((entry) => {
+    const words = extractKeywords(entry.reason)
+    words.forEach((word) => {
+      negativeWords[word] = (negativeWords[word] || 0) + 1
+    })
+  })
+
+  return { positive: positiveWords, negative: negativeWords }
+}
+
 // Analyze entries and return theme data
 export function analyzeEntries(entries: MoodEntry[]): {
   themeFrequency: Record<string, number>
   themesOverTime: Record<string, { date: string; count: number }[]>
   wordFrequency: Record<string, number>
+  wordsByFunctionLevel: {
+    positive: Record<string, number>
+    negative: Record<string, number>
+  }
 } {
   // Initialize result objects
   const themeFrequency: Record<string, number> = {}
   const themesOverTime: Record<string, { date: string; count: number }[]> = {}
   const wordFrequency: Record<string, number> = {}
+  const wordsByFunctionLevel = getWordsByFunctionLevel(entries)
 
   // Get themes based on actual words in entries
   const themes = identifyThemes(entries)
@@ -289,6 +325,7 @@ export function analyzeEntries(entries: MoodEntry[]): {
     themeFrequency,
     themesOverTime,
     wordFrequency,
+    wordsByFunctionLevel,
   }
 }
 

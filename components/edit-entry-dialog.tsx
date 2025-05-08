@@ -12,6 +12,16 @@ import { SimpleDateTimeSelector } from "@/components/simple-date-time-selector"
 import { useMood, type MoodEntry, type Feeling, type Location } from "./mood-provider"
 import { getFunctionLevelDescriptor } from "@/lib/function-level-utils"
 
+// Emoticons for each feeling
+const feelingEmoticons: Record<Feeling, string> = {
+  Afraid: "😨",
+  Sad: "😢",
+  Bland: "😐",
+  Angry: "😠",
+  Happy: "😊",
+  Other: "🤔",
+}
+
 interface EditEntryDialogProps {
   entry: MoodEntry | null
   open: boolean
@@ -106,27 +116,27 @@ export function EditEntryDialog({ entry, open, onOpenChange }: EditEntryDialogPr
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Afraid" id="edit-afraid" />
-                  <Label htmlFor="edit-afraid">Afraid</Label>
+                  <Label htmlFor="edit-afraid">{feelingEmoticons.Afraid} Afraid</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Sad" id="edit-sad" />
-                  <Label htmlFor="edit-sad">Sad</Label>
+                  <Label htmlFor="edit-sad">{feelingEmoticons.Sad} Sad</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Bland" id="edit-bland" />
-                  <Label htmlFor="edit-bland">Bland</Label>
+                  <Label htmlFor="edit-bland">{feelingEmoticons.Bland} Bland</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Angry" id="edit-angry" />
-                  <Label htmlFor="edit-angry">Angry</Label>
+                  <Label htmlFor="edit-angry">{feelingEmoticons.Angry} Angry</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Happy" id="edit-happy" />
-                  <Label htmlFor="edit-happy">Happy</Label>
+                  <Label htmlFor="edit-happy">{feelingEmoticons.Happy} Happy</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Other" id="edit-other" />
-                  <Label htmlFor="edit-other">Other</Label>
+                  <Label htmlFor="edit-other">{feelingEmoticons.Other} Other</Label>
                 </div>
               </div>
             </RadioGroup>
